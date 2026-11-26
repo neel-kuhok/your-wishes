@@ -192,7 +192,7 @@ $("#devfile").onchange=async e=>{const f=e.target.files[0];if(!f)return;const u=
 async function boot(){
   applyLang();
   const q=new URLSearchParams(location.search).get("c"),h=location.hash.startsWith("#d=")?location.hash.slice(3):"";
-  let d=null;
+  let d=null;if(q||h){$("#creator").hidden=true;$("#viewer").hidden=false;$("#viewer").innerHTML=`<div class="stage"><h2>🎁</h2></div>`}
   try{
     if(q&&SB){const r=await fetch(C.SUPABASE_URL+"/rest/v1/cards?id=eq."+encodeURIComponent(q)+"&select=data",{headers:H()});const j=await r.json();d=j[0]&&j[0].data}
     else if(h)d=JSON.parse(decodeURIComponent(escape(atob(h))));
