@@ -2,6 +2,7 @@
 "use strict";
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const C=window.YW,SB=C.SUPABASE_URL&&C.SUPABASE_ANON_KEY;
+const H=(x={})=>({apikey:C.SUPABASE_ANON_KEY,...(String(C.SUPABASE_ANON_KEY).startsWith("sb_")?{}:{Authorization:"Bearer "+C.SUPABASE_ANON_KEY}),...x});
 let lang=localStorage.getItem("yw_lang")||"bn";
 const t=s=>s.split("|")[lang==="bn"?1:0]||s;
 const esc=s=>String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -106,7 +107,7 @@ $("#create").onclick=async()=>{
     const base=location.origin+location.pathname;let link,msg;
     if(SB){
       const id=rand(10);
-      const r=await fetch(C.SUPABASE_URL+"/rest/v1/cards",{method:"POST",headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:"Bearer "+C.SUPABASE_ANON_KEY,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({id,data:d})});
+      const r=await fetch(C.SUPABASE_URL+"/rest/v1/cards",{method:"POST",headers:H({"Content-Type":"application/json",Prefer:"return=minimal"}),body:JSON.stringify({id,data:d})});
       if(!r.ok)throw t("Could not save online. Check your Supabase setup or reduce file sizes.|অনলাইনে সংরক্ষণ হয়নি। Supabase সেটআপ দেখুন বা ফাইল ছোট করুন।");
       link=base+"?c="+id;msg="Saved online with photos, voice and music. Share the PIN separately.|অনলাইনে সংরক্ষিত (ছবি, ভয়েস ও মিউজিকসহ)। পিন আলাদাভাবে পাঠান।";
     }else{
@@ -193,7 +194,7 @@ async function boot(){
   const q=new URLSearchParams(location.search).get("c"),h=location.hash.startsWith("#d=")?location.hash.slice(3):"";
   let d=null;
   try{
-    if(q&&SB){const r=await fetch(C.SUPABASE_URL+"/rest/v1/cards?id=eq."+encodeURIComponent(q)+"&select=data",{headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:"Bearer "+C.SUPABASE_ANON_KEY}});const j=await r.json();d=j[0]&&j[0].data}
+    if(q&&SB){const r=await fetch(C.SUPABASE_URL+"/rest/v1/cards?id=eq."+encodeURIComponent(q)+"&select=data",{headers:H()});const j=await r.json();d=j[0]&&j[0].data}
     else if(h)d=JSON.parse(decodeURIComponent(escape(atob(h))));
   }catch{}
   if(d){$("#creator").hidden=true;openViewer(d,false)}
